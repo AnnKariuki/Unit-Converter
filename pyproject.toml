@@ -7,7 +7,9 @@ authors = [
     { name = "Ann Kariuki", email = "ann.kariuki@duke.edu" }
 ]
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "fastapi[standard]>=0.142.4",
+]
 
 [project.scripts]
 unit-converter = "unit_converter:main"
