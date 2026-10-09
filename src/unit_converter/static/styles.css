@@ -1,0 +1,68 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+}
+/*
+by default, the width starts from the left edge of the element and extends 500px to the right. 
+but when you add margin: 0 auto; The browser calculates the remaining horizontal space and divides it equally between the left and right margins.
+if the parent is 1000px the wrapper begins 250px from the parent's left edge and ends 250px before its right edge.
+*/
+.body-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin: 0 auto;
+    padding-bottom: 20px;
+    width: 500px;
+    padding-left: 10px;
+    background-color: antiquewhite;
+    border:2px solid black;
+    border-radius: 5px;
+}
+
+ul {
+    display: flex; 
+    gap: 2rem;
+    list-style-type: none; 
+    padding: 0;
+    margin-bottom: 30px;
+}
+
+a:link,
+a:visited {
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: darkblue
+}
+
+.container label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+button[type="submit"] {
+    padding: 5px 10px;
+    font-weight: bold;
+    font-size: 1rem;
+    background-color: hsl(122, 39%, 50%);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer
+}
+
+/* 
+button: element selector
+[type="submit"]: attribute selector
+:hover: pseudo-class
+*/
+button[type="submit"]:hover {
+    background-color: hsl(122, 39%, 40%);
+}
+
+form {
+    margin: 0;
+    padding-bottom: 0;
+}
