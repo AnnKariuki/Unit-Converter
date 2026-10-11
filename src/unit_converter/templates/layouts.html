@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css')}}">
+    {%if title%}
+        <title>{{ title }}</title>
+    {% else %}
+        <title> Unit Converter</title>
+    {% endif %}
+</head>
+<body>
+    <div class="body-wrapper">
+        <h1>Unit Converter</h1>
+        <nav>
+            <ul>
+                <li><a href="{{url_for('length_page')}}">Length</a></li>
+                <li><a href="{{url_for('weight_page')}}">Weight</a></li>
+                <li><a href="{{url_for('temperature_page')}}">Temperature</a></li>
+            </ul>
+        </nav>
+        {% block content %}
+        {% endblock content %}
+    </div>
+</body>
+</html>

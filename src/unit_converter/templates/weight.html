@@ -1,0 +1,41 @@
+{%extends "layouts.html" %} 
+{% block content %}
+<form action="" method="POST">
+  <div class="container">
+    <label for="length">Enter the weight to convert</label>
+   <input type="number" id="length" name="length" step="any" required />
+  </div>
+
+  <br />
+
+  <div class="container">
+    <label for="from_unit">Unit to Convert from</label>
+    <select name="from_unit" id="from_unit">
+      <option value="milligram">Milligram</option>
+      <option value="gram">Gram</option>
+      <option value="kilogram">Kilogram</option>
+      <option value="ounce">Ounce</option>
+      <option value="pound">Pound</option>
+    </select>
+  </div>
+
+  <br />
+
+  <div class="container">
+    <label for="to_unit">Unit to Convert to</label>
+    <select name="to_unit" id="to_unit">
+      <option value="milligram">Milligram</option>
+      <option value="gram">Gram</option>
+      <option value="kilogram">Kilogram</option>
+      <option value="ounce">Ounce</option>
+      <option value="pound">Pound</option>
+    </select>
+  </div>
+
+  <br />
+
+  <div>
+    <button type="submit">Convert</button>
+  </div>
+</form>
+{% endblock content %}

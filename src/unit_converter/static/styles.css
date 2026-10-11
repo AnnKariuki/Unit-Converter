@@ -27,8 +27,7 @@ ul {
     margin-bottom: 30px;
 }
 
-a:link,
-a:visited {
+a:link {
     text-decoration: none;
     color: black;
 }
