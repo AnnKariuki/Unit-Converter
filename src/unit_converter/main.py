@@ -39,13 +39,19 @@ length_factors = {
     "mile": 0.000621371
 }
 
-# how many of unit fit into 1 meter 
+# how many of unit fit into 1 gram 
 weight_factors = {
     "milligram":1000,
     "gram":1,
     "kilogram":0.001,
     "ounce":0.035274,
     "pound":0.00220462
+}
+# how many of unit fit into 1 celcius 
+temperature_factors = {
+    "kelvin":274.15,
+    "fahrenheit":33.8,
+    "celsius":1,
 }
 
 @app.get("/")
@@ -61,7 +67,7 @@ def temperature_page(request: Request):
 
 @app.get("/weight")
 def weight_page(request: Request):
-    return templates.TemplateResponse(request, "weight.html", {"title": "weight"})
+    return templates.TemplateResponse(request, "weight.html", {"title": "weight", "converted": False})
 
 
 @app.post('/length')
@@ -96,8 +102,25 @@ async def convert_weight(request: Request, body: body_dep):
     except Exception:
         raise HTTPException(status_code=400, detail='Invalid Form data')
     # change from_unit to grams
-    value_in_meters = weight / weight_factors[from_unit] 
-    converted_value = value_in_meters * weight_factors[to_unit]
+    value_in_grams = weight / weight_factors[from_unit] 
+    converted_value = value_in_grams * weight_factors[to_unit]
     return templates.TemplateResponse(request, "weight.html", {"title": "weight", "converted": True, "weight": weight, "from_unit":from_unit, "to_unit": to_unit, "converted_value": converted_value})
     
 
+@app.post('/temperature')
+async def convert_temprature(request: Request, body: body_dep):
+    temperature_str = body["temperature"]
+    from_unit_str = body["from_unit"]
+    to_unit_str = body["to_unit"]
+    try: 
+        if isinstance(temperature_str, str) and isinstance(from_unit_str, str) and isinstance(to_unit_str, str):
+            temperature = float(temperature_str)
+            from_unit = from_unit_str
+            to_unit = to_unit_str
+    except Exception:
+        raise HTTPException(status_code=400, detail='Invalid Form data')
+    # change from_unit to celcius
+    value_in_celcius = temperature / temperature_factors[from_unit] 
+    converted_value = value_in_celcius * temperature_factors[to_unit]
+    return templates.TemplateResponse(request, "temperature.html", {"title": "temperature", "converted": True, "temperature": temperature, "from_unit":from_unit, "to_unit": to_unit, "converted_value": converted_value})
+    

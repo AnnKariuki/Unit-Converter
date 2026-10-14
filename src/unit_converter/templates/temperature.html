@@ -1,5 +1,6 @@
 {%extends "layouts.html" %} 
 {% block content %}
+{% if not converted%}
 <form action="" method="POST">
   <div class="container">
   <label for="temperature">Enter the temperature to convert</label>
@@ -34,4 +35,10 @@
     <button type="submit">Convert</button>
   </div>
 </form>
+{% else %}
+<p>Result of your calculation</p>
+<p>{{temperature}} {{from_unit}}s = {{converted_value}} {{to_unit}} </p>
+<button class="button-expanded"><a class="test" href="{{url_for('temperature_page')}}">Reset calculation</a>
+</button>
+{%endif%}
 {% endblock content %}
