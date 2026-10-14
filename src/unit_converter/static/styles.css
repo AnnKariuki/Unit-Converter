@@ -42,7 +42,7 @@ a:hover {
     margin-bottom: 8px;
 }
 
-button[type="submit"] {
+button[type="submit"], .button-expanded{
     padding: 5px 10px;
     font-weight: bold;
     font-size: 1rem;
@@ -57,11 +57,24 @@ button: element selector
 [type="submit"]: attribute selector
 :hover: pseudo-class
 */
-button[type="submit"]:hover {
+button[type="submit"]:hover , .button-expanded:hover {
     background-color: hsl(122, 39%, 40%);
 }
 
 form {
     margin: 0;
     padding-bottom: 0;
+}
+
+
+.button-expanded a:hover{
+    text-decoration: none;
+}
+
+.test{
+    color: black;
+}
+
+.button-expanded a:hover{
+    color: darkblue
 }

@@ -1,7 +1,8 @@
 {%extends "layouts.html" %} 
 {% block content %}
 <!--DO NOT USE GET since it appends info to your url as query/search params especially when submitting secure info like passwords-->
-<form action="" method="POST">
+{% if not converted%}
+<form action="{{url_for('convert_length')}}" method="POST"> <!--redirect to this route function when the form is submitted-->
   <div class="container">
     <!--for connects a label to an input element. This tells the browser that the label belongs to that input.One benefit is that clicking the label automatically focuses the 
                     corresponding input field. -->
@@ -49,4 +50,10 @@
     <button type="submit">Convert</button>
   </div>
 </form>
+{% else %}
+<p>Result of your calculation</p>
+<p>{{length}} {{from_unit}}s = {{converted_value}} {{to_unit}}s </p>
+<button class="button-expanded"><a class="test" href="{{url_for('length_page')}}">Reset calculation</a>
+</button>
+{%endif%}
 {% endblock content %}
