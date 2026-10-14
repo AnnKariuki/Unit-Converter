@@ -1,6 +1,7 @@
 {%extends "layouts.html" %} 
 {% block content %}
-<form action="" method="POST">
+{% if not converted%}
+<form action="{{url_for('convert_weight')}}" method="POST">
   <div class="container">
     <label for="weight">Enter the weight to convert</label>
    <input type="number" id="weight" name="weight" step="any" required />
@@ -38,4 +39,11 @@
     <button type="submit">Convert</button>
   </div>
 </form>
+
+{% else %}
+<p>Result of your calculation</p>
+<p>{{weight}} {{from_unit}}s = {{converted_value}} {{to_unit}}s </p>
+<button class="button-expanded"><a class="test" href="{{url_for('weight_page')}}">Reset calculation</a>
+</button>
+{%endif%}
 {% endblock content %}

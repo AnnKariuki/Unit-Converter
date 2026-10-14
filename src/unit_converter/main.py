@@ -27,7 +27,8 @@ async def get_body(request: Request):
 
 body_dep = Annotated[FormData, Depends(get_body)]
 
-factors ={
+# how many of unit fit into 1 meter 
+length_factors = {
     "millimeter": 1000,
     "centimeter": 100,
     "meter": 1,
@@ -36,6 +37,15 @@ factors ={
     "foot": 3.28084,
     "yard": 1.09361,
     "mile": 0.000621371
+}
+
+# how many of unit fit into 1 meter 
+weight_factors = {
+    "milligram":1000,
+    "gram":1,
+    "kilogram":0.001,
+    "ounce":0.035274,
+    "pound":0.00220462
 }
 
 @app.get("/")
@@ -47,7 +57,7 @@ def length_page(request: Request):
 
 @app.get("/temperature")
 def temperature_page(request: Request):
-    return templates.TemplateResponse(request, "temperature.html", {"title": "temperature"})
+    return templates.TemplateResponse(request, "temperature.html", {"title": "temperature",  "converted": False})
 
 @app.get("/weight")
 def weight_page(request: Request):
@@ -60,6 +70,7 @@ async def convert_length(request: Request, body: body_dep):
     from_unit_str = body["from_unit"]
     to_unit_str = body["to_unit"]
     try: 
+        # this is for mypy to differentiate between str and FileUpload
         if isinstance(length_str, str) and isinstance(from_unit_str, str) and isinstance(to_unit_str, str):
             length = float(length_str)
             from_unit = from_unit_str
@@ -67,8 +78,26 @@ async def convert_length(request: Request, body: body_dep):
     except Exception:
         raise HTTPException(status_code=400, detail='Invalid Form data')
     # change from_unit to meters
-    value_in_meters = length / factors[from_unit] 
-    converted_value = value_in_meters * factors[to_unit]
+    value_in_meters = length / length_factors[from_unit] 
+    converted_value = value_in_meters * length_factors[to_unit]
     return templates.TemplateResponse(request, "length.html", {"title": "length", "converted": True, "length": length, "from_unit":from_unit, "to_unit": to_unit, "converted_value": converted_value})
+    
+
+@app.post('/weight')
+async def convert_weight(request: Request, body: body_dep):
+    weight_str = body["weight"]
+    from_unit_str = body["from_unit"]
+    to_unit_str = body["to_unit"]
+    try: 
+        if isinstance(weight_str, str) and isinstance(from_unit_str, str) and isinstance(to_unit_str, str):
+            weight = float(weight_str)
+            from_unit = from_unit_str
+            to_unit = to_unit_str
+    except Exception:
+        raise HTTPException(status_code=400, detail='Invalid Form data')
+    # change from_unit to grams
+    value_in_meters = weight / weight_factors[from_unit] 
+    converted_value = value_in_meters * weight_factors[to_unit]
+    return templates.TemplateResponse(request, "weight.html", {"title": "weight", "converted": True, "weight": weight, "from_unit":from_unit, "to_unit": to_unit, "converted_value": converted_value})
     
 
