@@ -3,9 +3,12 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from typing import Annotated
 from starlette.datastructures import FormData
+from pathlib import Path
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+BASE_DIR = Path(__file__).resolve().parent
+
+templates = Jinja2Templates(directory=BASE_DIR / "templates")
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 
 
 async def get_body(request: Request):
@@ -46,12 +49,6 @@ weight_factors = {
     "kilogram":0.001,
     "ounce":0.035274,
     "pound":0.00220462
-}
-# how many of unit fit into 1 celcius 
-temperature_factors = {
-    "kelvin":274.15,
-    "fahrenheit":33.8,
-    "celsius":1,
 }
 
 @app.get("/")
@@ -108,7 +105,7 @@ async def convert_weight(request: Request, body: body_dep):
     
 
 @app.post('/temperature')
-async def convert_temprature(request: Request, body: body_dep):
+async def convert_temperature(request: Request, body: body_dep):
     temperature_str = body["temperature"]
     from_unit_str = body["from_unit"]
     to_unit_str = body["to_unit"]
@@ -119,8 +116,22 @@ async def convert_temprature(request: Request, body: body_dep):
             to_unit = to_unit_str
     except Exception:
         raise HTTPException(status_code=400, detail='Invalid Form data')
-    # change from_unit to celcius
-    value_in_celcius = temperature / temperature_factors[from_unit] 
-    converted_value = value_in_celcius * temperature_factors[to_unit]
+    # change from_unit to celsius
+    value_in_celsius = 0.0
+    if from_unit == "celsius":
+        value_in_celsius = temperature
+    elif from_unit == "kelvin":
+        value_in_celsius = temperature - 273.15
+    elif from_unit == "fahrenheit":
+        value_in_celsius = (temperature - 32) * (5 / 9)
+
+    converted_value = 0.0
+    if to_unit == "celsius":
+        converted_value = value_in_celsius
+    elif to_unit == 'kelvin':
+        converted_value = value_in_celsius + 273.15
+    elif to_unit == "fahrenheit":
+        converted_value = (value_in_celsius * (5 / 9)) + 32
+
     return templates.TemplateResponse(request, "temperature.html", {"title": "temperature", "converted": True, "temperature": temperature, "from_unit":from_unit, "to_unit": to_unit, "converted_value": converted_value})
     
