@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends, status, HTTPException
+from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from typing import Annotated
@@ -22,6 +22,7 @@ async def get_body(request: Request):
         raise HTTPException(status_code=400, detail="Invalid form data")
     elif content_type == 'application/x-www-form-urlencoded':
         try:
+            # FormData([('weight', '23'), ('from_unit', 'milligram'), ('to_unit', 'milligram')])
             return await request.form()
         except Exception:
             raise HTTPException(status_code=400, detail='Invalid Form data')
@@ -78,8 +79,10 @@ async def convert_length(request: Request, body: body_dep):
             length = float(length_str)
             from_unit = from_unit_str
             to_unit = to_unit_str
+        else:
+            raise ValueError("Invalid form data")
     except Exception:
-        raise HTTPException(status_code=400, detail='Invalid Form data')
+        raise HTTPException(status_code=400, detail="Invalid form data")
     # change from_unit to meters
     value_in_meters = length / length_factors[from_unit] 
     converted_value = value_in_meters * length_factors[to_unit]
@@ -96,8 +99,10 @@ async def convert_weight(request: Request, body: body_dep):
             weight = float(weight_str)
             from_unit = from_unit_str
             to_unit = to_unit_str
+        else:
+            raise ValueError("Invalid form data")
     except Exception:
-        raise HTTPException(status_code=400, detail='Invalid Form data')
+        raise HTTPException(status_code=400, detail="Invalid form data")
     # change from_unit to grams
     value_in_grams = weight / weight_factors[from_unit] 
     converted_value = value_in_grams * weight_factors[to_unit]
@@ -114,8 +119,14 @@ async def convert_temperature(request: Request, body: body_dep):
             temperature = float(temperature_str)
             from_unit = from_unit_str
             to_unit = to_unit_str
+        # if the isinstance() condition evaluates to False. Python skips the entire if block.
+        # No exception is raised, so the except block doesn't execute. Execution continues after the try/except.
+        # variables temperature, from_unit, and to_unit haven't been assigned. hence we are adding an else even though 
+        # it is kind of impossible since the values our form is providing are strings
+        else:
+            raise ValueError("Invalid form data")
     except Exception:
-        raise HTTPException(status_code=400, detail='Invalid Form data')
+        raise HTTPException(status_code=400, detail="Invalid form data")
     # change from_unit to celsius
     value_in_celsius = 0.0
     if from_unit == "celsius":
@@ -128,10 +139,10 @@ async def convert_temperature(request: Request, body: body_dep):
     converted_value = 0.0
     if to_unit == "celsius":
         converted_value = value_in_celsius
-    elif to_unit == 'kelvin':
+    elif to_unit == "kelvin":
         converted_value = value_in_celsius + 273.15
     elif to_unit == "fahrenheit":
-        converted_value = (value_in_celsius * (5 / 9)) + 32
+        converted_value = (value_in_celsius * (9 / 5)) + 32
 
     return templates.TemplateResponse(request, "temperature.html", {"title": "temperature", "converted": True, "temperature": temperature, "from_unit":from_unit, "to_unit": to_unit, "converted_value": converted_value})
     
