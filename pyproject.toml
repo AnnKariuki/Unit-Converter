@@ -1,7 +1,7 @@
 [project]
 name = "unit-converter"
 version = "0.1.0"
-description = "Add your description here"
+description = "a simple web app that can convert between different units of measurement."
 readme = "README.md"
 authors = [
     { name = "Ann Kariuki", email = "ann.kariuki@duke.edu" }
@@ -9,6 +9,8 @@ authors = [
 requires-python = ">=3.11"
 dependencies = [
     "fastapi[standard]>=0.142.4",
+    "httpx>=0.28.1",
+    "httpx2>=2.15.1",
 ]
 
 [project.scripts]
