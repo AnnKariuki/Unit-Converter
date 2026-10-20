@@ -46,6 +46,92 @@ class TestApp(TestCase):
         self.assertEqual(resp.context.get("title"), "weight")
         self.assertIs(resp.context.get("converted"), False)
 
+    def test_convert_length_successfully_converts_units(self):
+        form_payload = {
+            "length":"23",
+            "from_unit": "millimeter",
+            "to_unit": "meter"
+        }
+        resp = self.client.post("/length", data=form_payload)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.template.name, "length.html")
+        self.assertIs(resp.context.get("converted"), True)
+        self.assertEqual(resp.context.get("converted_value"), 0.023)
+        self.assertIn("0.023", resp.text)
+
+
+    def test_convert_length_returns_400_for_invalid_numeric_input(self):
+        form_payload = {
+            "length":"r",
+            "from_unit": "4", # doesnt matter if i wrote the number 4 cause when testclient submits data the value 4 is encoded as the string "4"
+            "to_unit": "meter"
+        }
+        resp = self.client.post("/length", data=form_payload)
+        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(resp.json()["detail"], "Invalid form data")
+        # response is json body {"detail": "Invalid form data"}
+
+    def test_convert_weight_successfully_converts_units(self):
+        form_payload = {
+            "weight":"23",
+            "from_unit": "kilogram",
+            "to_unit": "milligram"
+        }
+        resp = self.client.post("/weight", data=form_payload)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.template.name, "weight.html")
+        self.assertIs(resp.context.get("converted"), True)
+        self.assertEqual(resp.context.get("converted_value"), 23000000)
+        self.assertIn("23000000", resp.text)
+
+    def test_convert_weight_returns_400_for_invalid_numeric_input(self):
+        form_payload = {
+            "weight":"r",
+            "from_unit": "milligram", 
+            "to_unit": "kilogram"
+        }
+        resp = self.client.post("/weight", data=form_payload)
+        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(resp.json()["detail"], "Invalid form data")
+
+
+    def test_convert_temperature_successfully_converts_units(self):
+        form_payload = {
+            "temperature":"23",
+            "from_unit": "kelvin",
+            "to_unit": "fahrenheit"
+        }
+        resp = self.client.post("/temperature", data=form_payload)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.template.name, "temperature.html")
+        self.assertIs(resp.context.get("converted"), True)
+        # we are working with floating-point arithmetic so we use almost equal to avoid failures caused by tiny floating-point rounding differences
+        self.assertAlmostEqual(resp.context.get("converted_value"), -418.27)
+        self.assertIn("-418", resp.text)
+
+    def test_convert_temperature_returns_400_for_invalid_numeric_input(self):
+        form_payload = {
+            "temperature":"r",
+            "from_unit": "fahrenheit", 
+            "to_unit": "kelvin"
+        }
+        resp = self.client.post("/temperature", data=form_payload)
+        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(resp.json()["detail"], "Invalid form data")
+
+    def test_convert_temperature_fahrenheit_to_celsius(self):
+        form_payload = {
+            "temperature": "32",
+            "from_unit": "fahrenheit",
+            "to_unit": "celsius"
+        }
+
+        resp = self.client.post("/temperature", data=form_payload)
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.template.name, "temperature.html")
+        self.assertIs(resp.context.get("converted"), True)
+        self.assertAlmostEqual(resp.context.get("converted_value"), 0.0)
 
 if __name__ == "__main__":
     unittest.main()
