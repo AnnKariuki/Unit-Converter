@@ -55,6 +55,7 @@ weight_factors = {
 @app.get("/")
 def home_page(request: Request): # path operation function
     return templates.TemplateResponse(request, "layouts.html")
+
 @app.get("/length")
 def length_page(request: Request):
     return templates.TemplateResponse(request, "length.html", {"title": "length", "converted": False})
